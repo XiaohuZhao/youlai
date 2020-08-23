@@ -14,7 +14,7 @@ spring:
           predicates:
             - Path=/auth/**
           filters:
-            - StripPrefix=0
+            - StripPrefix=1
         - id: youlai-file
           uri: lb://youlai-service
           predicates:
@@ -27,7 +27,6 @@ spring:
             - Path=/admin/**
           filters:
             - StripPrefix=1
-
 eureka:
   client:
     service-url:

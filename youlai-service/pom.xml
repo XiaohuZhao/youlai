@@ -26,7 +26,6 @@
             <version>${lombok.version}</version>
         </dependency>
 
-        <!-- HuTool -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>

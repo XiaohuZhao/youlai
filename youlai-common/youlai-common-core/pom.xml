@@ -12,6 +12,11 @@
     <artifactId>youlai-common-core</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
         <!-- swagger2-annotations -->
         <dependency>
             <groupId>io.swagger</groupId>
