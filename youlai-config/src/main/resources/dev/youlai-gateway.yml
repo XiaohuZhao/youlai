@@ -6,7 +6,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false
+          enabled: true # 启用服务发现
           lower-case-service-id: true
       routes:
         - id: youlai-auth
