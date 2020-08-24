@@ -1,80 +1,105 @@
 package com.youlai.service.auth.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.youlai.service.auth.component.JwtTokenEnhancer;
+import com.youlai.service.auth.service.UserDetailsServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
-import javax.sql.DataSource;
+import java.security.KeyPair;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * 认证服务器
+ */
 @Configuration
 @EnableAuthorizationServer
+@AllArgsConstructor
 public class AuthorizationServerConfig implements AuthorizationServerConfigurer {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
+    private PasswordEncoder passwordEncoder;
+    private UserDetailsServiceImpl userDetailsService;
     private AuthenticationManager authenticationManager;
+    private JwtTokenEnhancer jwtTokenEnhancer;
 
-    @Autowired
-    private DataSource dataSource;
-
-    @Bean
-    public TokenStore jdbcTokenStore() {
-        return new JdbcTokenStore(dataSource);
-    }
-
-    @Bean
-    public ClientDetailsService clientDetailsService() {
-        return new JdbcClientDetailsService(dataSource);
-    }
-
+    /**
+     * 配置客户端详情（可以把客户端信息写死在此或者通过数据库来存储调取详情信息）
+     * @param clients
+     * @throws Exception
+     */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.withClientDetails(clientDetailsService());
+        clients.inMemory()
+                .withClient("admin-client")
+                .secret(passwordEncoder.encode("123456"))
+                .scopes("all")
+                .authorizedGrantTypes("password", "refresh_token")
+                .accessTokenValiditySeconds(3600)
+                .refreshTokenValiditySeconds(86400);
     }
 
+    /**
+     * 配置令牌端点的安全约束
+     * @param endpoints
+     * @throws Exception
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(jdbcTokenStore())
+        // 配置JWT的内容增强器
+        TokenEnhancerChain tokenEnhancerChain=new TokenEnhancerChain();
+        List<TokenEnhancer> tokenEnhancers=new ArrayList<>();
+        tokenEnhancers.add(jwtTokenEnhancer);
+        tokenEnhancers.add(jwtAccessTokenConverter());
+        tokenEnhancerChain.setTokenEnhancers(tokenEnhancers);
+
+        endpoints.authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
-                .authenticationManager(authenticationManager);
-        endpoints.tokenServices(defaultTokenServices());
+                .accessTokenConverter(jwtAccessTokenConverter())
+                .tokenEnhancer(tokenEnhancerChain);
     }
 
-
-    @Primary
-    @Bean
-    public DefaultTokenServices defaultTokenServices(){
-        DefaultTokenServices tokenServices = new DefaultTokenServices();
-        tokenServices.setTokenStore(jdbcTokenStore());
-        tokenServices.setSupportRefreshToken(true);
-        // token有效期自定义设置，默认12小时
-        tokenServices.setAccessTokenValiditySeconds(60*60*12);
-        // refresh_token默认30天
-        tokenServices.setRefreshTokenValiditySeconds(60 * 60 * 24 * 7);
-        return tokenServices;
-    }
-
+    /**
+     * 用来配置授权一级令牌访问端点和令牌服务
+     * @param security
+     * @throws Exception
+     */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security
-                .allowFormAuthenticationForClients()
-                .tokenKeyAccess("permitAll()") // oauth/token_key公开
-                .checkTokenAccess("permitAll()"); // oauth/check_token公开
+        security.allowFormAuthenticationForClients();
     }
 
+    /**
+     * 使用非对称加密算法对token签名
+     * @return
+     */
+    @Bean
+    public JwtAccessTokenConverter jwtAccessTokenConverter(){
+        JwtAccessTokenConverter jwtAccessTokenConverter=new JwtAccessTokenConverter();
+        jwtAccessTokenConverter.setKeyPair(keyPair());
+        return jwtAccessTokenConverter;
+    }
+
+    /**
+     * 从classpath下的证书中获取秘钥对
+     * @return
+     */
+    @Bean
+    public KeyPair keyPair(){
+        KeyStoreKeyFactory keyStoreKeyFactory=new KeyStoreKeyFactory(new ClassPathResource("jwt.jks"),"123456".toCharArray());
+        KeyPair keyPair = keyStoreKeyFactory.getKeyPair("jwt", "123456".toCharArray());
+        return keyPair;
+    }
 }

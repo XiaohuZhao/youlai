@@ -19,6 +19,8 @@ public class SysUser extends BaseEntity {
 
     private String password;
 
+    private String status;
+
     private String salt;
 
     private Integer deptId;

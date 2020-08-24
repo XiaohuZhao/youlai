@@ -5,44 +5,27 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.youlai.common.result.Result;
 import com.youlai.service.system.entity.SysUser;
 import com.youlai.service.system.service.ISysUserService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.service.TokenEndpoint;
 
 import java.security.Principal;
 
+@Api(tags = "认证中心认证登录")
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/oauth")
 public class AuthController {
 
     @Autowired
-    private TokenStore jdbcTokenStore;
+    private TokenEndpoint tokenEndpoint;
 
-    @Autowired
-    private ISysUserService iSysUserService;
+    @PostMapping("/token")
+    public Result token(){
 
-    @GetMapping("/info")
-    public Result<SysUser> user(Principal principal) {
-        String username = principal.getName();
-        SysUser user = iSysUserService.getOne(new LambdaQueryWrapper<SysUser>()
-                .eq(SysUser::getUsername, username));
-        return Result.success(user);
-    }
-
-    @DeleteMapping("/logout")
-    public Result logout(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader) {
-        if (StringUtils.isBlank(authHeader)) {
-            return Result.error();
-        }
-        String tokenValue = authHeader.replace(OAuth2AccessToken.BEARER_TYPE.toLowerCase(), "").trim();
-        OAuth2AccessToken oAuth2AccessToken = jdbcTokenStore.readAccessToken(tokenValue);
-        if (oAuth2AccessToken == null || StringUtils.isBlank(oAuth2AccessToken.getValue())) {
-            return Result.success();
-        }
-        jdbcTokenStore.removeAccessToken(oAuth2AccessToken);
-        return Result.success();
     }
 
 }
