@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.youlai.service.auth.domain.LoginUser;
 import com.youlai.service.auth.domain.User;
 import com.youlai.service.system.entity.SysUser;
+import com.youlai.service.system.entity.SysUserRole;
 import com.youlai.service.system.service.ISysRoleService;
+import com.youlai.service.system.service.ISysUserRoleService;
 import com.youlai.service.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;
@@ -18,6 +20,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -33,6 +38,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private ISysRoleService iSysRoleService;
 
     @Autowired
+    private ISysUserRoleService iSysUserRoleService;
+
+    @Autowired
     private HttpServletRequest request;
 
     @Override
@@ -45,6 +53,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = new User();
         BeanUtil.copyProperties(sysUser, user);
         user.setClientId(clientId);
+
+        List<String> roles = iSysUserRoleService.list(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, sysUser.getId())).stream()
+                .map(item -> item.getRoleId().toString()).collect(Collectors.toList());
+        user.setRoles(roles);
         LoginUser loginUser = new LoginUser(user);
         if (!loginUser.isEnabled()) {
             throw new DisabledException("该账户已被禁用!");

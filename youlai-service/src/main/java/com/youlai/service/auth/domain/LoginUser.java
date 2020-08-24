@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 
@@ -34,6 +35,10 @@ public class LoginUser implements UserDetails {
         this.setPassword(user.getPassword());
         this.setEnabled(user.getStatus().equals(1));
         this.setClientId(user.getClientId());
+        if(user.getRoles()!=null){
+            authorities=new ArrayList<>();
+            user.getRoles().forEach(item -> authorities.add(new SimpleGrantedAuthority(item)));
+        }
 
     }
 
@@ -45,31 +50,31 @@ public class LoginUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return this.username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return this.enabled;
     }
 }
