@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.Charset;
 
 @Component
-public class CustomServerAccessDeniedHandler implements ServerAccessDeniedHandler {
+public class ResourceServerAccessDeniedHandler implements ServerAccessDeniedHandler {
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, AccessDeniedException e) {
