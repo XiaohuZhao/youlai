@@ -1,4 +1,4 @@
-package com.youlai.service.auth.domain;
+package com.youlai.common.auth.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
 package com.youlai.gateway.filter;
 
-import com.youlai.common.constant.AuthConstant;
+import com.youlai.common.auth.constant.AuthConstant;
 import com.youlai.gateway.config.WhiteUrlsConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;

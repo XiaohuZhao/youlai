@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Oauth2TokenDTO {
+public class Oauth2Token {
 
     @ApiModelProperty("访问令牌")
     private String token ;

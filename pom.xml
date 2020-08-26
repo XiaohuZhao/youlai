@@ -13,6 +13,7 @@
     <modules>
         <module>youlai-service</module>
         <module>youlai-common</module>
+        <module>youlai-common-auth</module>
     </modules>
 
     <parent>

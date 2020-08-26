@@ -1,4 +1,4 @@
-package com.youlai.common.constant;
+package com.youlai.common.auth.constant;
 
 public interface AuthConstant {
 

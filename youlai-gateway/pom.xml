@@ -25,6 +25,12 @@
 
         <dependency>
             <groupId>com.youlai</groupId>
+            <artifactId>youlai-common-auth</artifactId>
+            <version>${youlai-common.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.youlai</groupId>
             <artifactId>youlai-common-redis</artifactId>
             <version>${youlai-common.version}</version>
         </dependency>

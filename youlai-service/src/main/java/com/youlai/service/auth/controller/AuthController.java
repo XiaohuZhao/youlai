@@ -1,12 +1,11 @@
 package com.youlai.service.auth.controller;
 
 import com.youlai.common.result.Result;
-import com.youlai.service.auth.domain.Oauth2TokenDTO;
+import com.youlai.service.auth.domain.Oauth2Token;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -43,13 +42,13 @@ public class AuthController {
             @ApiIgnore @RequestParam Map<String, String> parameters
     ) throws HttpRequestMethodNotSupportedException {
         OAuth2AccessToken oAuth2AccessToken = tokenEndpoint.postAccessToken(principal, parameters).getBody();
-        Oauth2TokenDTO oauth2TokenDTO = Oauth2TokenDTO.builder()
+        Oauth2Token oauth2Token = Oauth2Token.builder()
                 .token(oAuth2AccessToken.getValue())
                 .refreshToken(oAuth2AccessToken.getRefreshToken().getValue())
                 .expiresIn(oAuth2AccessToken.getExpiresIn())
                 .tokenHead("Bearer ")
                 .build();
-        return Result.success(oauth2TokenDTO);
+        return Result.success(oauth2Token);
     }
 
 }

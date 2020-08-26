@@ -1,9 +1,8 @@
 package com.youlai.gateway.filter;
 
 import cn.hutool.core.util.StrUtil;
-import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.JWSObject;
-import com.youlai.common.constant.AuthConstant;
+import com.youlai.common.auth.constant.AuthConstant;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

@@ -1,5 +1,10 @@
-package com.youlai.gateway.component;
+package com.youlai.gateway.auth;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+import com.nimbusds.jose.JWSObject;
+import com.youlai.common.auth.constant.AuthConstant;
+import com.youlai.common.auth.domain.User;
 import com.youlai.gateway.config.WhiteUrlsConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,6 +20,7 @@ import org.springframework.util.PathMatcher;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -31,8 +37,8 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
 
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
-        ServerHttpRequest request=authorizationContext.getExchange().getRequest();
-        URI uri=request.getURI();
+        ServerHttpRequest request = authorizationContext.getExchange().getRequest();
+        URI uri = request.getURI();
         //白名单路径直接放行
         PathMatcher pathMatcher = new AntPathMatcher();
         List<String> whiteUrls = whiteUrlsConfig.getUrls();
@@ -42,7 +48,31 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             }
         }
         //对应跨域的预检请求直接放行
-        if(request.getMethod()== HttpMethod.OPTIONS){
+        if (request.getMethod() == HttpMethod.OPTIONS) {
+            return Mono.just(new AuthorizationDecision(true));
+        }
+
+        try {
+            String token = request.getHeaders().getFirst(AuthConstant.JWT_TOKEN_HEADER);
+            if (StrUtil.isBlank(token)) {
+                return Mono.just(new AuthorizationDecision(false));
+            }
+            token = token.replace(AuthConstant.JWT_TOKEN_PREFIX, "");
+            JWSObject jwsObject = JWSObject.parse(token);
+            String payload = jwsObject.getPayload().toString(); // jwt 载体部分
+            User user = JSONUtil.toBean(payload, User.class);
+
+            if (AuthConstant.ADMIN_CLIENT_ID.equals(user.getClientId())
+                    && !pathMatcher.match(AuthConstant.ADMIN_URL_PATTERN, uri.getPath())) {
+                return Mono.just(new AuthorizationDecision(false));
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return Mono.just(new AuthorizationDecision(false));
+        }
+
+        // 非管理端路径直接放行
+        if(!pathMatcher.match(AuthConstant.ADMIN_URL_PATTERN,uri.getPath())){
             return Mono.just(new AuthorizationDecision(true));
         }
 

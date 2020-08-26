@@ -19,6 +19,7 @@
         <module>youlai-common-redis</module>
         <module>youlai-common-web</module>
         <module>youlai-common-db</module>
+        <module>youlai-common-auth</module>
     </modules>
 
     <properties>
