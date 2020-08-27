@@ -53,4 +53,9 @@ public interface AuthConstant {
      */
     String ADMIN_URL_PATTERN="/admin/**";
 
+    /**
+     * Redis缓存权限规则key
+     */
+    String RESOURCE_ROLES_MAP_KEY = "auth:resourceRolesMap";
+
 }

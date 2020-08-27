@@ -2,8 +2,8 @@ package com.youlai.service.auth.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.youlai.common.auth.domain.User;
 import com.youlai.service.auth.domain.LoginUser;
-import com.youlai.service.auth.domain.User;
 import com.youlai.service.system.entity.SysUser;
 import com.youlai.service.system.entity.SysUserRole;
 import com.youlai.service.system.service.ISysRoleService;
@@ -53,7 +53,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         BeanUtil.copyProperties(sysUser, user);
         user.setClientId(clientId);
 
-        List<String> roles = iSysUserRoleService.list(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, sysUser.getId())).stream()
+        List<String> roles = iSysUserRoleService.list(new LambdaQueryWrapper<SysUserRole>()
+                .eq(SysUserRole::getUserId, sysUser.getId())).stream()
                 .map(item -> item.getRoleId().toString()).collect(Collectors.toList());
         user.setRoles(roles);
         LoginUser loginUser = new LoginUser(user);

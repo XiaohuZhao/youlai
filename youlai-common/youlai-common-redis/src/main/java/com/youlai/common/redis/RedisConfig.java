@@ -25,10 +25,10 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-    @Bean
+ /*   @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer().setAddress("redis://localhost:6379").setPassword("");
         return Redisson.create(config);
-    }
+    }*/
 }
