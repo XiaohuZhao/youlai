@@ -19,12 +19,12 @@ public class ResourceRoleRulesHolder {
     private RedisTemplate redisTemplate;
 
     @PostConstruct
-    public void initResourceRolesMap(){
-        Map<String, List<String>> resourceRoleMap=new TreeMap<>();
-        List<String> roleNames=new ArrayList<>();
-        roleNames.add("2_admin");
-        resourceRoleMap.put("/youlai-service/users",roleNames);
+    public void initResourceRolesMap() {
+        Map<String, List<String>> resourceRoleMap = new TreeMap<>();
+        List<String> roleNames = new ArrayList<>();
+        roleNames.add(AuthConstant.AUTHORITY_PREFIX + "1_root");
+        resourceRoleMap.put("/youlai-service/users", roleNames);
         redisTemplate.delete(AuthConstant.RESOURCE_ROLES_MAP_KEY);
-        redisTemplate.opsForHash().putAll(AuthConstant.RESOURCE_ROLES_MAP_KEY,resourceRoleMap);
+        redisTemplate.opsForHash().putAll(AuthConstant.RESOURCE_ROLES_MAP_KEY, resourceRoleMap);
     }
 }

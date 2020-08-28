@@ -55,7 +55,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         List<String> roles = iSysUserRoleService.list(new LambdaQueryWrapper<SysUserRole>()
                 .eq(SysUserRole::getUserId, sysUser.getId())).stream()
-                .map(item -> item.getRoleId().toString()).collect(Collectors.toList());
+                .map(item -> item.getRoleId().toString()+"_root").collect(Collectors.toList());
         user.setRoles(roles);
         LoginUser loginUser = new LoginUser(user);
         if (!loginUser.isEnabled()) {

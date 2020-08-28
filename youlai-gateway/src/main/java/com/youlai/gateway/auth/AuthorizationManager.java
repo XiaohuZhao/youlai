@@ -80,10 +80,9 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         }
 
         // 管理端路径需要校验权限
-        Set keys = redisTemplate.keys("*");
-
         Map<Object, Object> resourceRolesMap = redisTemplate.opsForHash().entries(AuthConstant.RESOURCE_ROLES_MAP_KEY);
         Iterator<Object> iterator = resourceRolesMap.keySet().iterator();
+
         List<String> authorities = new ArrayList<>();
         while (iterator.hasNext()) {
             String pattern = (String) iterator.next();
@@ -91,14 +90,15 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
                 authorities.addAll(Convert.toList(String.class, resourceRolesMap.get(pattern)));
             }
         }
-        authorities = authorities.stream().map(item -> AuthConstant.AUTHORITY_PREFIX + item).collect(Collectors.toList());
-
-        return mono
+        List<String> finalAuthorities = authorities;
+        Mono<AuthorizationDecision> authorizationDecisionMono = mono
                 .filter(Authentication::isAuthenticated)
                 .flatMapIterable(Authentication::getAuthorities)
                 .map(GrantedAuthority::getAuthority)
                 .any(authorities::contains)
                 .map(AuthorizationDecision::new)
                 .defaultIfEmpty(new AuthorizationDecision(false));
+
+        return authorizationDecisionMono;
     }
 }
