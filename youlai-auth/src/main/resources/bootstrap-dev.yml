@@ -1,9 +1,10 @@
+server:
+  port: 8000
+
 spring:
   application:
     name: youlai-auth
-  main:
-    allow-bean-definition-overriding: true
   cloud:
-    config:
-      uri: http://localhost:8888
-      name: ${spring.application.name}
+    nacos:
+      discovery:
+        server-addr: http://localhost:8848
