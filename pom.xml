@@ -11,9 +11,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>youlai-service</module>
+        <module>youlai-admin</module>
         <module>youlai-common</module>
         <module>youlai-auth</module>
+        <module>youlai-admin-api</module>
     </modules>
 
     <parent>
