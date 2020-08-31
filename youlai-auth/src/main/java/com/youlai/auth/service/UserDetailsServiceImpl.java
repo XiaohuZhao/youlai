@@ -1,7 +1,7 @@
 package com.youlai.auth.service;
 
-import com.youlai.api.admin.dto.UserDTO;
-import com.youlai.api.admin.service.UmsAdminService;
+import com.youlai.admin.api.dto.UserDTO;
+import com.youlai.admin.api.service.UmsAdminService;
 import com.youlai.auth.domain.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;

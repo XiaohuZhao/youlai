@@ -10,7 +10,7 @@ import com.youlai.admin.entity.SysUserRole;
 import com.youlai.admin.service.ISysRoleService;
 import com.youlai.admin.service.ISysUserRoleService;
 import com.youlai.admin.service.ISysUserService;
-import com.youlai.api.admin.dto.UserDTO;
+import com.youlai.admin.api.dto.UserDTO;
 import com.youlai.common.result.PageResult;
 import com.youlai.common.result.Result;
 import io.swagger.annotations.Api;
@@ -19,12 +19,10 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Api(tags = "用户接口")

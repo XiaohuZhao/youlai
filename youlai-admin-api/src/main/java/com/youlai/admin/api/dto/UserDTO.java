@@ -1,4 +1,4 @@
-package com.youlai.api.admin.dto;
+package com.youlai.admin.api.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

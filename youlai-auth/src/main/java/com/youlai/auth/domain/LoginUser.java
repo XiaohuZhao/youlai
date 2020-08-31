@@ -1,7 +1,6 @@
 package com.youlai.auth.domain;
 
-import com.youlai.api.admin.dto.UserDTO;
-import com.youlai.common.auth.domain.User;
+import com.youlai.admin.api.dto.UserDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

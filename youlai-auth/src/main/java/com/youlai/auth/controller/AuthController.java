@@ -1,7 +1,7 @@
 package com.youlai.auth.controller;
 
-import com.youlai.api.admin.dto.UserDTO;
-import com.youlai.api.admin.service.UmsAdminService;
+import com.youlai.admin.api.dto.UserDTO;
+import com.youlai.admin.api.service.UmsAdminService;
 import com.youlai.auth.domain.Oauth2Token;
 import com.youlai.common.result.Result;
 import io.swagger.annotations.Api;
