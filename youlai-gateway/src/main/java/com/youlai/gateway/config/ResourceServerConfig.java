@@ -3,8 +3,8 @@ package com.youlai.gateway.config;
 
 import cn.hutool.core.util.ArrayUtil;
 import com.youlai.common.auth.constant.AuthConstant;
-import com.youlai.gateway.component.AuthServerAuthenticationEntryPoint;
 import com.youlai.gateway.auth.AuthorizationManager;
+import com.youlai.gateway.component.AuthServerAuthenticationEntryPoint;
 import com.youlai.gateway.component.ResourceServerAccessDeniedHandler;
 import com.youlai.gateway.filter.WhiteUrlsRemoveJwtFilter;
 import lombok.AllArgsConstructor;

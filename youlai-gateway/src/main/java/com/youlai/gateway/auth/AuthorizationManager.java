@@ -4,8 +4,8 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.nimbusds.jose.JWSObject;
+import com.youlai.admin.api.dto.UserDTO;
 import com.youlai.common.auth.constant.AuthConstant;
-import com.youlai.common.auth.domain.User;
 import com.youlai.gateway.config.WhiteUrlsConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,8 +23,10 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.text.ParseException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 鉴权管理器，用于判断是否有资源的访问权限
@@ -63,9 +65,9 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
             token = token.replace(AuthConstant.JWT_TOKEN_PREFIX, "");
             JWSObject jwsObject = JWSObject.parse(token);
             String payload = jwsObject.getPayload().toString(); // jwt 载体部分
-            User user = JSONUtil.toBean(payload, User.class);
+            UserDTO userDTO = JSONUtil.toBean(payload, UserDTO.class);
 
-            if (AuthConstant.ADMIN_CLIENT_ID.equals(user.getClientId())
+            if (AuthConstant.ADMIN_CLIENT_ID.equals(userDTO.getClientId())
                     && !pathMatcher.match(AuthConstant.ADMIN_URL_PATTERN, uri.getPath())) {
                 return Mono.just(new AuthorizationDecision(false));
             }
